@@ -13,13 +13,16 @@ def get_stock_client():
 
 client = StockAPI()
 
+
 @st.cache_data(ttl=3600)
 def get_company_symbols(company: str):
     return client.get_symbols(company)
 
+
 @st.cache_data(ttl=3600)
 def get_stock_data(symbol: str):
     return client.get_daily_prices(symbol)
+
 
 # Show the title for web app
 st.title("Stock Market Project")
