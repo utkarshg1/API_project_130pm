@@ -13,6 +13,14 @@ def get_stock_client():
 
 client = StockAPI()
 
+@st.cache_data(ttl=3600)
+def get_company_symbols(company: str):
+    return client.get_symbols(company)
+
+@st.cache_data(ttl=3600)
+def get_stock_data(symbol: str):
+    return client.get_daily_prices(symbol)
+
 # Show the title for web app
 st.title("Stock Market Project")
 st.subheader("by Utkarsh Gaikwad")
@@ -21,7 +29,8 @@ st.subheader("by Utkarsh Gaikwad")
 company = st.text_input("Enter the company name : ")
 
 if company:
-    search_df = client.get_symbols(company)
+    # search_df = client.get_symbols(company)
+    search_df = get_company_symbols(company)
     symbols = search_df["1. symbol"].tolist()
     # Dropdown of symbols
     sel_symbol = st.selectbox("Select the symbol", options=symbols)
@@ -31,7 +40,8 @@ if company:
     button = st.button("Plot Chart", type="primary")
     # If the button is pressed then load the dataframe from the api
     if button:
-        stock_df = client.get_daily_prices(sel_symbol)
+        # stock_df = client.get_daily_prices(sel_symbol)
+        stock_df = get_stock_data(sel_symbol)
         st.dataframe(stock_df.head())
         fig = client.plot_candlestick(stock_df)
         st.plotly_chart(fig)
